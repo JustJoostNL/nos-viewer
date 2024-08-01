@@ -1,0 +1,60 @@
+{
+  "productName": "tauri-template",
+  "version": "1.0.0",
+  "identifier": "com.justjoostnl.tauri-template",
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Tauri Template App",
+        "dragDropEnabled": false,
+        "theme": "Dark",
+        "width": 800,
+        "height": 600
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "build": {
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist",
+    "beforeDevCommand": "vite",
+    "beforeBuildCommand": "tsc && vite build"
+  },
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": [
+          "tauri-template"
+        ]
+      },
+      "mobile": []
+    },
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEY2OTI0RjJBRDEyNzU0NTAKUldSUVZDZlJLaytTOXM2Q1JudmNrQXBXS3BrSDRaWHRYalF6U093aEp2Zjdrc3F2dnkvNG1SS0IK",
+      "endpoints": [
+        "https://github.com/JustJoostNL/tauri-template/releases/latest/download/latest.json"
+      ]
+    }
+  },
+  "bundle": {
+    "active": true,
+    "createUpdaterArtifacts": true,
+    "copyright": "Copyright (c) 2024 JustJoostNL",
+    "publisher": "JustJoostNL",
+    "category": "Utility",
+    "shortDescription": "A Tauri Template app",
+    "longDescription": "This is a Tauri Template app. It is a simple app that shows how to use Tauri. You can use this app as a starting point for your own app.",
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

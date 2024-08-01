@@ -1,0 +1,27 @@
+[package]
+name = "tauri-template"
+version = "1.0.0"
+description = "Tauri Template App"
+authors = ["JustJoostNL"]
+edition = "2021"
+
+
+[build-dependencies]
+tauri-build = { version = "2.0.0-beta", features = [] }
+
+[dependencies]
+#tauri
+tauri = { version = "2.0.0-beta", features = [] }
+tauri-macros = { version = "2.0.0-beta", features = [] }
+tauri-plugin-fs = "2.0.0-beta"
+tauri-plugin-os = "2.0.0-beta"
+tauri-plugin-deep-link = "2.0.0-beta"
+tauri-plugin-shell = "2.0.0-beta"
+
+#other
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-single-instance = "2.0.0-beta.12"
+tauri-plugin-updater = "2.0.0-beta.12"
