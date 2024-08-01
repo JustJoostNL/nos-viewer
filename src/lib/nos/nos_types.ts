@@ -1,8 +1,8 @@
 export interface ILiveAndBroadcastResponse {
-  items: Item[];
+  items: LiveItem[];
 }
 
-export interface Item {
+export interface LiveItem {
   id: number;
   type: string;
   title: string;

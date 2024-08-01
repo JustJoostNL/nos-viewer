@@ -4,6 +4,7 @@ import { CssBaseline, Grow, ThemeProvider } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import { platform } from "@tauri-apps/plugin-os";
+import { IntlProvider } from "react-intl";
 import { IndexPage } from "./pages/IndexPage";
 import { BaseStyle } from "./components/shared/BaseStyle";
 import { theme } from "./lib/theme";
@@ -27,16 +28,18 @@ root.render(
         maxSnack={2}
         TransitionComponent={Grow}
       >
-        <ThemeProvider theme={theme}>
-          {platformName !== "macos" && <MinimalScrollbars />}
-          <BaseStyle />
-          <CssBaseline />
-          <HashRouter>
-            <Routes>
-              <Route path="/" element={<IndexPage />} />
-            </Routes>
-          </HashRouter>
-        </ThemeProvider>
+        <IntlProvider locale="en" defaultLocale="en">
+          <ThemeProvider theme={theme}>
+            {platformName !== "macos" && <MinimalScrollbars />}
+            <BaseStyle />
+            <CssBaseline />
+            <HashRouter>
+              <Routes>
+                <Route path="/" element={<IndexPage />} />
+              </Routes>
+            </HashRouter>
+          </ThemeProvider>
+        </IntlProvider>
       </SnackbarProvider>
     </ConfigProvider>
   </React.StrictMode>,
