@@ -13,7 +13,7 @@ fn main() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_deep_link::init())
         .setup(|app| {
-            app.listen("tauri-template://deep-link", |msg| {
+            app.listen("nosviewer://deep-link", |msg| {
                 dbg!(msg);
             });
             Ok(())

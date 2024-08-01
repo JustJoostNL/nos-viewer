@@ -1,17 +1,17 @@
 {
-  "productName": "tauri-template",
+  "productName": "NOS Viewer",
   "version": "1.0.0",
-  "identifier": "com.justjoostnl.tauri-template",
+  "identifier": "com.justjoostnl.nos-viewer",
   "app": {
     "withGlobalTauri": true,
     "windows": [
       {
         "label": "main",
-        "title": "Tauri Template App",
+        "title": "NOS Viewer",
         "dragDropEnabled": false,
         "theme": "Dark",
-        "width": 800,
-        "height": 600
+        "width": 1230,
+        "height": 830
       }
     ],
     "security": {
@@ -28,15 +28,15 @@
     "deep-link": {
       "desktop": {
         "schemes": [
-          "tauri-template"
+          "nosviewer"
         ]
       },
       "mobile": []
     },
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEY2OTI0RjJBRDEyNzU0NTAKUldSUVZDZlJLaytTOXM2Q1JudmNrQXBXS3BrSDRaWHRYalF6U093aEp2Zjdrc3F2dnkvNG1SS0IK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDVFNDY0QjE5RjcwMENBQ0UKUldUT3lnRDNHVXRHWGhXVGpVdmxQcUV3NzNRTWkyRkVnc1hONW5YdzNEa0ViNDgrOXA0QmdEcjAK",
       "endpoints": [
-        "https://github.com/JustJoostNL/tauri-template/releases/latest/download/latest.json"
+        "https://github.com/JustJoostNL/nos-viewer/releases/latest/download/latest.json"
       ]
     }
   },
@@ -46,8 +46,8 @@
     "copyright": "Copyright (c) 2024 JustJoostNL",
     "publisher": "JustJoostNL",
     "category": "Utility",
-    "shortDescription": "A Tauri Template app",
-    "longDescription": "This is a Tauri Template app. It is a simple app that shows how to use Tauri. You can use this app as a starting point for your own app.",
+    "shortDescription": "A app to view NOS videos",
+    "longDescription": "This app is a viewer for NOS videos. It allows you to view the latest videos from the NOS website, as well as their live streams.",
     "targets": "all",
     "icon": [
       "icons/32x32.png",

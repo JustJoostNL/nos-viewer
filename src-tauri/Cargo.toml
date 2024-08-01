@@ -1,9 +1,9 @@
 [package]
-name = "tauri-template"
+name = "nos-viewer"
 version = "1.0.0"
-description = "Tauri Template App"
+description = "An app to view NOS videos"
 authors = ["JustJoostNL"]
-edition = "2021"
+edition = "2018"
 
 
 [build-dependencies]

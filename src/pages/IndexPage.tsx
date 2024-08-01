@@ -1,23 +1,20 @@
-import { Box, Switch, Typography } from "@mui/material";
-import React, { useCallback } from "react";
+import { Typography } from "@mui/material";
+import React from "react";
+import useSWR from "swr";
 import { JSONTree } from "react-json-tree";
-import { useConfig } from "../hooks/useConfig";
+import { ContentLayout } from "../components/layouts/ContentLayout";
+import { getLivestreamsAndBroadcasts } from "../lib/nos/api";
 
 export function IndexPage() {
-  const { config, updateConfig } = useConfig();
-
-  const handleChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      updateConfig({ test: event.target.checked });
-    },
-    [updateConfig],
-  );
+  const { data } = useSWR("nos", getLivestreamsAndBroadcasts);
 
   return (
-    <Box>
-      <Typography variant="h1">Hey, welcome!</Typography>
-      <Switch checked={config.test} onChange={handleChange} />
-      <JSONTree data={config} />
-    </Box>
+    <ContentLayout title="Home">
+      <Typography variant="h4" my={2} mx={2}>
+        Welcome to NOS Viewer!
+      </Typography>
+
+      <JSONTree data={data?.items} />
+    </ContentLayout>
   );
 }
