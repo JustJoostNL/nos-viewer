@@ -28,7 +28,7 @@ root.render(
         maxSnack={2}
         TransitionComponent={Grow}
       >
-        <IntlProvider locale="en" defaultLocale="en">
+        <IntlProvider locale="en-GB" defaultLocale="en-GB">
           <ThemeProvider theme={theme}>
             {platformName !== "macos" && <MinimalScrollbars />}
             <BaseStyle />

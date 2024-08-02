@@ -5,6 +5,7 @@ import { JSONTree } from "react-json-tree";
 import { ContentLayout } from "../components/layouts/ContentLayout";
 import { getLivestreamsAndBroadcasts } from "../lib/nos/api";
 import { VideoList } from "../components/nos/VideoList";
+import { VideoListSkeleton } from "../components/nos/VideoListSkeleton";
 
 export function IndexPage() {
   const { data } = useSWR("nos", getLivestreamsAndBroadcasts);
@@ -15,7 +16,7 @@ export function IndexPage() {
         Welcome to NOS Viewer!
       </Typography>
 
-      {data && <VideoList videos={data.items} />}
+      {data ? <VideoList videos={data.items} /> : <VideoListSkeleton />}
 
       <JSONTree data={data?.items} />
     </ContentLayout>
