@@ -52,3 +52,71 @@ export interface Format {
 export interface URL {
   jpg: string;
 }
+
+export interface InvidualVideoItem {
+  id: number;
+  external_id: string;
+  type: string;
+  title: string;
+  description: string;
+  published_at: string;
+  modified_at: string;
+  item_at: string;
+  image: Image;
+  bios: any[];
+  owner: string;
+  categories: Category[];
+  collections: any[];
+  keywords: Keyword[];
+  system_tag: Keyword;
+  automated_recommendations: boolean;
+  push_topics: any[];
+  summary: string;
+  formats: IInvidualVideoItemFormat[];
+  geoprotection: boolean;
+  stream_type: string;
+  availability: string;
+  start_at: string;
+  end_at: string;
+  channel: string;
+  events: Event[];
+  banners: Banner[];
+}
+
+export interface Banner {
+  id: number;
+  title: string;
+  page_slug: string;
+  description: string;
+  system_tag: Keyword;
+  with_live_icon: boolean;
+  image: Image;
+}
+
+export interface Category {
+  name: string;
+  label: string;
+  main_category: string;
+}
+
+export interface Event {
+  title: string;
+  date_time: Date;
+  type: string;
+}
+
+export interface IInvidualVideoItemFormat {
+  name: string;
+  url: FormatURL;
+  width: number;
+  height: number;
+  label: string;
+  mimetype: string;
+}
+
+export interface FormatURL {
+  hls: string;
+  smooth: string;
+  mp4: string;
+  dash: string;
+}

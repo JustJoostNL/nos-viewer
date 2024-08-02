@@ -11,6 +11,7 @@ import { theme } from "./lib/theme";
 import { ConfigProvider } from "./hooks/useConfig";
 import { MinimalScrollbars } from "./components/shared/MinimalScrollbars";
 import { IndexPage } from "./pages/IndexPage";
+import { Player } from "./pages/Player";
 
 const platformName = platform();
 const root = ReactDOM.createRoot(
@@ -38,6 +39,7 @@ root.render(
               <Routes>
                 <Route path="/" element={<IndexPage />} />
                 <Route path="/home" element={<HomePage />} />
+                <Route path="/player/:id" element={<Player />} />
               </Routes>
             </HashRouter>
           </ThemeProvider>

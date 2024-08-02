@@ -56,7 +56,7 @@ export function HomePage() {
 
   const fetcher = tabCategoryToFetcher(tab);
 
-  const { data, isValidating } = useSWR(
+  const { data } = useSWR(
     {
       key: tab.toString(),
       limit,

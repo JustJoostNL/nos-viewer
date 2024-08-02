@@ -56,7 +56,7 @@ export const VideoListItem: FC<IProps> = ({ video }) => {
     <Card>
       <CardActionArea
         component={Link}
-        to={`/nos/videos/${encodeURIComponent(video.id)}`}
+        to={`/player/${encodeURIComponent(video.id)}`}
         sx={{
           display: "flex",
           flexDirection: "column",

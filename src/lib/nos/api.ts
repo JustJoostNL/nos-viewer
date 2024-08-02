@@ -1,4 +1,4 @@
-import { IVideoItemsResponse } from "./nos_types";
+import { InvidualVideoItem, IVideoItemsResponse } from "./nos_types";
 
 const liveAndBoradcastUrl =
   "https://api.jstt.me/api/v2/nos/nosapp/v4/livestreams-and-broadcasts";
@@ -64,6 +64,26 @@ export async function getVideoItems({
   if (!response.ok) {
     throw new NosApiError(
       `Failed to fetch videos: ${await response.text()}`,
+      response,
+    );
+  }
+
+  const json = await response.json();
+  return json;
+}
+
+export async function getVideoItem({
+  id,
+}: {
+  id: number;
+}): Promise<InvidualVideoItem> {
+  const itemUrl = `https://api.jstt.me/api/v2/nos/nosapp/v4/items/${id}`;
+
+  const response = await fetch(itemUrl);
+
+  if (!response.ok) {
+    throw new NosApiError(
+      `Failed to fetch video item: ${await response.text()}`,
       response,
     );
   }
