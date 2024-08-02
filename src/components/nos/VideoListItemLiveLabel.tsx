@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { styled } from "@mui/material";
-import { LiveItem } from "../../lib/nos/nos_types";
+import { VideoItem } from "../../lib/nos/nos_types";
 import { timestampToUnix } from "./shared";
 
 const LiveLabel = styled("div")(({ theme }) => ({
@@ -21,7 +21,7 @@ const LiveLabel = styled("div")(({ theme }) => ({
 }));
 
 interface IProps {
-  video: LiveItem;
+  video: VideoItem;
 }
 
 export const VideoListItemLiveLabel: FC<IProps> = ({ video }) => {

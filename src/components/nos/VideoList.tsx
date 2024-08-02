@@ -1,6 +1,6 @@
 import React from "react";
 import { styled } from "@mui/system";
-import { ILiveAndBroadcastResponse } from "../../lib/nos/nos_types";
+import { VideoItem } from "../../lib/nos/nos_types";
 import { VideoListItem } from "./VideoListItem";
 
 export const Root = styled("div")(({ theme }) => ({
@@ -11,7 +11,7 @@ export const Root = styled("div")(({ theme }) => ({
 }));
 
 interface IProps {
-  videos: ILiveAndBroadcastResponse["items"];
+  videos: VideoItem[];
 }
 
 export const VideoList = ({ videos }: IProps) => (

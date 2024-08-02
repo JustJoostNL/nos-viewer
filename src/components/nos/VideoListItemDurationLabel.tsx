@@ -1,7 +1,8 @@
 import React, { FC, useCallback } from "react";
 import { styled } from "@mui/material";
 import { cardClasses } from "@mui/material/Card";
-import { LiveItem } from "../../lib/nos/nos_types";
+import { VideoItem } from "../../lib/nos/nos_types";
+import { timestampToUnix } from "./shared";
 
 const DurationLabel = styled("span")(({ theme }) => ({
   position: "absolute",
@@ -23,20 +24,36 @@ const DurationLabel = styled("span")(({ theme }) => ({
 }));
 
 interface IProps {
-  video: LiveItem;
+  video: VideoItem;
 }
 
 export const VideoListItemDurationLabel: FC<IProps> = ({ video }) => {
-  const formatDuration = useCallback((seconds: number) => {
-    const dateObj = new Date(seconds * 1000);
-    return seconds >= 3600
+  const videoDuration = video.duration;
+  const startAt = timestampToUnix(video.start_at);
+  const endAt = timestampToUnix(video.end_at);
+
+  const formatVideoDuration = useCallback((duration: number) => {
+    const dateObj = new Date(duration * 1000);
+    return duration >= 3600
       ? dateObj.toISOString().slice(11, 19)
       : dateObj.toISOString().slice(14, 19);
   }, []);
 
-  const durationLabel = video.duration
-    ? formatDuration(video.duration)
-    : undefined;
+  const formatDurationBetweenDates = useCallback(
+    (start: number, end: number) => {
+      const startDate = new Date(start * 1000);
+      const endDate = new Date(end * 1000);
+      const duration = (endDate.getTime() - startDate.getTime()) / 1000;
+      return formatVideoDuration(duration);
+    },
+    [formatVideoDuration],
+  );
+
+  const durationLabel = videoDuration
+    ? formatVideoDuration(videoDuration)
+    : startAt && endAt
+      ? formatDurationBetweenDates(startAt, endAt)
+      : undefined;
 
   if (!durationLabel) return null;
 

@@ -6,34 +6,29 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import React, { FC, useCallback, useMemo } from "react";
+import React, { FC, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { FormattedDateTimeRange } from "react-intl";
-import { LiveItem } from "../../lib/nos/nos_types";
+import { VideoItem } from "../../lib/nos/nos_types";
 import { RelativeTimeAgo } from "../shared/RelativeTimeAgo";
 import { VideoListItemLiveLabel } from "./VideoListItemLiveLabel";
 import { VideoListItemDurationLabel } from "./VideoListItemDurationLabel";
+import { timestampToUnix } from "./shared";
 
 const fallbackImage =
   "https://static.nos.nl/img/uitzendingen/programs/nos-journaal_2048.jpg";
 
 interface IProps {
-  video: LiveItem;
+  video: VideoItem;
 }
 
 export const VideoListItem: FC<IProps> = ({ video }) => {
-  const { start_at, end_at, date, title, image } = video;
-
-  const toUnix = useCallback(
-    (timestamp: string | undefined) =>
-      timestamp ? Math.floor(new Date(timestamp).getTime() / 1000) : undefined,
-    [],
-  );
+  const image = video.image;
 
   const dateMeta = {
-    start: toUnix(start_at),
-    end: toUnix(end_at),
-    date: toUnix(date),
+    start: timestampToUnix(video.start_at),
+    end: timestampToUnix(video.end_at),
+    date: timestampToUnix(video.date),
   };
 
   const imageUrl = useMemo(() => {
@@ -44,7 +39,7 @@ export const VideoListItem: FC<IProps> = ({ video }) => {
       return sortedFormats[sortedFormats.length - 1].url.jpg;
     }
     return fallbackImage;
-  }, [image]);
+  }, [image?.formats]);
 
   const currentYear = new Date().getFullYear();
   const displayYear =
@@ -71,7 +66,14 @@ export const VideoListItem: FC<IProps> = ({ video }) => {
           position="relative"
           sx={{ aspectRatio: "16/9", width: "100%", height: "auto" }}
         >
-          <CardMedia component="img" src={imageUrl} alt={title} />
+          <CardMedia
+            component="img"
+            src={imageUrl}
+            alt={video.title}
+            onError={(e) => {
+              e.currentTarget.src = fallbackImage;
+            }}
+          />
           <VideoListItemLiveLabel video={video} />
           <VideoListItemDurationLabel video={video} />
         </Box>
@@ -87,7 +89,7 @@ export const VideoListItem: FC<IProps> = ({ video }) => {
             }}
             title={video.description}
           >
-            {title}
+            {video.title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {dateMeta.start && dateMeta.end ? (
