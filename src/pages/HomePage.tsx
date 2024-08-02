@@ -15,52 +15,46 @@ import { VideoListSkeleton } from "../components/nos/VideoListSkeleton";
 
 enum TabCatorgory {
   BROADCASTS = "broadcasts",
-  SPORT_VIDEOS = "sport-videos",
-  NEWS_VIDEOS = "news-videos",
-  F1_VIDEOS = "f1-videos",
-  OLYMPIC_VIDEOS = "olympic-videos",
+  SPORTS = "sports",
+  NEWS = "news",
+  FORMULA1 = "formula1",
+  OLYMPICS = "olympics",
+  SOCCER = "soccer",
+  CYCLING = "cycling",
+  ICE_SKATING = "ice-skating",
+  TENNIS = "tennis",
 }
 
-function tabCategoryToFetcher(tab: TabCatorgory) {
-  switch (tab) {
-    case TabCatorgory.BROADCASTS:
-      return {
-        function: getBroadcasts,
-        args: {},
-      };
-    case TabCatorgory.SPORT_VIDEOS:
-      return {
-        function: getVideoItems,
-        args: {
-          mainCategory: MainCategory.SPORT,
-          type: SubCategory.VIDEO,
-        },
-      };
-    case TabCatorgory.NEWS_VIDEOS:
-      return {
-        function: getVideoItems,
-        args: {
-          mainCategory: MainCategory.NEWS,
-          type: SubCategory.VIDEO,
-        },
-      };
-    case TabCatorgory.OLYMPIC_VIDEOS:
-      return {
-        function: getVideoItems,
-        args: {
-          systemTag: "os-2024",
-          type: SubCategory.VIDEO,
-        },
-      };
-    case TabCatorgory.F1_VIDEOS:
-      return {
-        function: getVideoItems,
-        args: {
-          subCategory: "formule-1",
-        },
-      };
-  }
-}
+const tabCategoryToArgs: Record<TabCatorgory, any> = {
+  [TabCatorgory.BROADCASTS]: {},
+  [TabCatorgory.SPORTS]: {
+    mainCategory: MainCategory.SPORT,
+    type: SubCategory.VIDEO,
+  },
+  [TabCatorgory.NEWS]: {
+    mainCategory: MainCategory.NEWS,
+    type: SubCategory.VIDEO,
+  },
+  [TabCatorgory.OLYMPICS]: {
+    systemTag: "os-2024",
+    type: SubCategory.VIDEO,
+  },
+  [TabCatorgory.FORMULA1]: {
+    subCategory: "formule-1",
+  },
+  [TabCatorgory.SOCCER]: {
+    subCategory: "voetbal",
+  },
+  [TabCatorgory.CYCLING]: {
+    subCategory: "wielrennen",
+  },
+  [TabCatorgory.ICE_SKATING]: {
+    subCategory: "schaatsen",
+  },
+  [TabCatorgory.TENNIS]: {
+    subCategory: "tennis",
+  },
+};
 
 const MAX_LIMIT = 100;
 
@@ -71,15 +65,13 @@ export function HomePage() {
 
   useHotkeys("d", () => setDebug((prev) => !prev));
 
-  const fetcher = tabCategoryToFetcher(tab);
-
   const { data } = useSWR(
     {
       key: tab.toString(),
       limit,
-      ...fetcher.args,
+      ...tabCategoryToArgs[tab],
     },
-    fetcher.function,
+    tab === TabCatorgory.BROADCASTS ? getBroadcasts : getVideoItems,
     {
       refreshInterval: 1000 * 30, // 30 seconds
     },
@@ -109,13 +101,17 @@ export function HomePage() {
         sx={{ marginBottom: 2 }}
       >
         <Tab label="Live Broadcasts" value="broadcasts" />
-        <Tab label="Sport Videos" value="sport-videos" />
-        <Tab label="Olympic Videos" value="olympic-videos" />
-        <Tab label="F1 Videos" value="f1-videos" />
-        <Tab label="News Videos" value="news-videos" />
+        <Tab label="Sports" value="sports" />
+        <Tab label="Olympics" value="olympics" />
+        <Tab label="Formula 1" value="formula1" />
+        <Tab label="News" value="news" />
+        <Tab label="Soccer" value="soccer" />
+        <Tab label="Cycling" value="cycling" />
+        <Tab label="Ice Skating" value="ice-skating" />
+        <Tab label="Tennis" value="tennis" />
       </Tabs>
 
-      {data ? <VideoList videos={data.items} /> : <VideoListSkeleton />}
+      {data?.items ? <VideoList videos={data.items} /> : <VideoListSkeleton />}
 
       <Box display="flex" justifyContent="center" my={4}>
         <ButtonGroup>
