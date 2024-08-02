@@ -5,11 +5,12 @@ import { SnackbarProvider } from "notistack";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import { platform } from "@tauri-apps/plugin-os";
 import { IntlProvider } from "react-intl";
-import { IndexPage } from "./pages/IndexPage";
+import { HomePage } from "./pages/HomePage";
 import { BaseStyle } from "./components/shared/BaseStyle";
 import { theme } from "./lib/theme";
 import { ConfigProvider } from "./hooks/useConfig";
 import { MinimalScrollbars } from "./components/shared/MinimalScrollbars";
+import { IndexPage } from "./pages/IndexPage";
 
 const platformName = platform();
 const root = ReactDOM.createRoot(
@@ -36,6 +37,7 @@ root.render(
             <HashRouter>
               <Routes>
                 <Route path="/" element={<IndexPage />} />
+                <Route path="/home" element={<HomePage />} />
               </Routes>
             </HashRouter>
           </ThemeProvider>

@@ -15,7 +15,7 @@ export const Navbar: FC = () => {
     window.history.back();
   }, []);
 
-  const showBackButton = window.location.hash !== "";
+  const showBackButton = window.location.hash !== "#/home";
 
   return (
     <>

@@ -1,114 +1,112 @@
-import { Stack, Tab, Tabs, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import useSWR from "swr";
-import { JSONTree } from "react-json-tree";
+import React, { useCallback, useEffect, useState } from "react";
+import { styled } from "@mui/system";
+import { check, Update } from "@tauri-apps/plugin-updater";
+import { useNavigate } from "react-router-dom";
 import { useHotkeys } from "react-hotkeys-hook";
-import { ContentLayout } from "../components/layouts/ContentLayout";
-import {
-  getBroadcasts,
-  getVideoItems,
-  MainCategory,
-  SubCategory,
-} from "../lib/nos/api";
-import { VideoList } from "../components/nos/VideoList";
-import { VideoListSkeleton } from "../components/nos/VideoListSkeleton";
+import { ErrorOutlineRounded } from "@mui/icons-material";
+import { CircularProgress, Typography, Stack, Button } from "@mui/material";
+import { theme } from "../lib/theme";
 
-enum TabCatorgory {
-  VIDEOS = "videos",
-  BROADCASTS = "broadcasts",
-}
+const Container = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  height: "100vh",
+  gap: theme.spacing(2),
+});
 
-function tabCategoryToFetcher(
-  tab: TabCatorgory,
-  mainCategory: MainCategory,
-  subCategory: SubCategory,
-) {
-  switch (tab) {
-    case TabCatorgory.BROADCASTS:
-      return {
-        function: getBroadcasts,
-        args: {},
-      };
-    case TabCatorgory.VIDEOS:
-      return {
-        function: getVideoItems,
-        args: { mainCategory, subCategory },
-      };
-  }
-}
+const Content = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "100vh",
+  padding: theme.spacing(2),
+  gap: theme.spacing(4),
+});
 
 export function IndexPage() {
-  const [mainCategory, setMainCategory] = useState<MainCategory>(
-    MainCategory.SPORT,
-  );
-  const [subCategory, setSubCategory] = useState<SubCategory>(
-    SubCategory.VIDEO,
-  );
-  const [tab, setTab] = useState<TabCatorgory>(TabCatorgory.BROADCASTS);
-  const [lastItemId, setLastItemId] = useState<number | undefined>(undefined);
-  const [debug, setDebug] = useState(false);
-
-  useHotkeys("d", () => setDebug((prev) => !prev));
-
-  const fetcher = tabCategoryToFetcher(tab, mainCategory, subCategory);
-
-  const { data, mutate } = useSWR(
-    {
-      key: tab.toString(),
-      ...fetcher.args,
-    },
-    fetcher.function,
-    {
-      refreshInterval: 1000 * 30, // 30 seconds
-    },
-  );
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+  const [updateResult, setUpdateResult] = useState<Update | null>(null);
+  const [doneChecking, setDoneChecking] = useState(false);
+  const [updateError, setUpdateError] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!data) return;
+    (async () => {
+      try {
+        const updateResult = await check();
+        const isAvailable = Boolean(updateResult?.available);
+        setUpdateResult(updateResult);
+        setUpdating(isAvailable);
+        setDoneChecking(true);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setDoneChecking(true);
+      }
+    })();
+  }, []);
 
-    const lastItem = data.items[data.items.length - 1];
-    setLastItemId(lastItem.id);
-  }, [data]);
+  useEffect(() => {
+    if ((!updating && !doneChecking) || !updateResult) return;
+
+    (async () => {
+      await updateResult?.downloadAndInstall().catch(() => {
+        setUpdateError(true);
+      });
+    })();
+  }, [updating, doneChecking, updateResult]);
+
+  const handleContinue = useCallback(() => {
+    navigate("/home");
+  }, [navigate]);
+
+  useHotkeys("shift+s", handleContinue);
+
+  useEffect(() => {
+    if (!updating && doneChecking) {
+      setLoading(false);
+      if (!updateError) navigate("/home");
+    }
+  }, [updating, doneChecking, navigate, updateError]);
 
   return (
-    <ContentLayout title="Home">
-      <Typography variant="h4" my={2} mx={2}>
-        Welcome to NOS Viewer!
-      </Typography>
-
-      <Stack direction="row" spacing={2} sx={{ marginBottom: 2 }}>
-        <Typography variant="h6">Main Category:</Typography>
-        <Tabs
-          value={mainCategory}
-          onChange={(_, value) => setMainCategory(value)}
-        >
-          <Tab label="Sport" value={MainCategory.SPORT} />
-          <Tab label="News" value={MainCategory.NEWS} />
-        </Tabs>
-
-        <Typography variant="h6">Sub Category:</Typography>
-        <Tabs
-          value={subCategory}
-          onChange={(_, value) => setSubCategory(value)}
-        >
-          <Tab label="Video" value={SubCategory.VIDEO} />
-          <Tab label="Livestream" value={SubCategory.LIVESTREAM} />
-        </Tabs>
-      </Stack>
-
-      <Tabs
-        value={tab}
-        onChange={(_, value) => setTab(value)}
-        variant="fullWidth"
-        sx={{ marginBottom: 2 }}
-      >
-        <Tab label="Live Broadcasts" value="broadcasts" />
-        <Tab label="Videos" value="videos" />
-      </Tabs>
-
-      {data ? <VideoList videos={data.items} /> : <VideoListSkeleton />}
-
-      {debug && <JSONTree data={{ items: data?.items, lastItemId }} />}
-    </ContentLayout>
+    <Container>
+      <Content>
+        {!updateError && <CircularProgress />}
+        {updateError && <ErrorOutlineRounded color="warning" />}
+        <Typography>
+          {loading || !doneChecking
+            ? "Checking for updates..."
+            : updating
+              ? "Installing update..."
+              : updateError
+                ? "Failed to automatically update, please download the latest version manually."
+                : ""}
+        </Typography>
+        {!updating && updateError && (
+          <Stack direction="row" gap={2}>
+            <Button onClick={handleContinue}>
+              Continue with outdated version
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://github.com/JustJoostNL/nos-viewer/releases/latest"
+            >
+              Download update
+            </Button>
+          </Stack>
+        )}
+        {updating && (
+          <Button onClick={handleContinue} sx={{ mt: 2 }}>
+            Skip checking for updates
+          </Button>
+        )}
+      </Content>
+    </Container>
   );
 }

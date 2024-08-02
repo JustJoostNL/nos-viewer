@@ -42,17 +42,19 @@ export async function getBroadcasts(): Promise<IVideoItemsResponse> {
 }
 
 export async function getVideoItems({
+  limit = 20,
   mainCategory,
   subCategory,
   lastItemId,
 }: {
-  mainCategory: MainCategory;
+  limit?: string | number;
+  mainCategory?: MainCategory;
   subCategory?: SubCategory;
   lastItemId?: number;
 }): Promise<IVideoItemsResponse> {
   const url = new URL(videoUrl);
 
-  url.searchParams.set("limit", "20");
+  url.searchParams.set("limit", limit.toString());
   if (lastItemId) url.searchParams.set("before", lastItemId.toString());
   if (mainCategory) url.searchParams.set("mainCategories[0]", mainCategory);
   if (subCategory) url.searchParams.set("types[0]", subCategory);
