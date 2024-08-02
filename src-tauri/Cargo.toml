@@ -1,18 +1,18 @@
 [package]
 name = "nos-viewer"
-version = "1.0.0"
+version = "1.0.1"
 description = "An app to view NOS videos"
 authors = ["JustJoostNL"]
 edition = "2018"
 
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-beta", features = [] }
+tauri-build = { version = "2.0.0-rc.0", features = [] }
 
 [dependencies]
 #tauri
-tauri = { version = "2.0.0-beta", features = [] }
-tauri-macros = { version = "2.0.0-beta", features = [] }
+tauri = { version = "2.0.0-rc.0", features = [] }
+tauri-macros = { version = "2.0.0-rc.0", features = [] }
 tauri-plugin-fs = "2.0.0-beta"
 tauri-plugin-os = "2.0.0-beta"
 tauri-plugin-deep-link = "2.0.0-beta"
