@@ -65,7 +65,7 @@ export function HomePage() {
 
   useHotkeys("d", () => setDebug((prev) => !prev));
 
-  const { data } = useSWR(
+  const { data, error } = useSWR(
     {
       key: tab.toString(),
       limit,
@@ -87,6 +87,16 @@ export function HomePage() {
   useEffect(() => {
     setLimit(20);
   }, [tab]);
+
+  if (error) {
+    return (
+      <ContentLayout title="Home">
+        <Typography variant="h4" my={2} mx={2}>
+          Failed to fetch data: {error.message}
+        </Typography>
+      </ContentLayout>
+    );
+  }
 
   return (
     <ContentLayout title="Home">

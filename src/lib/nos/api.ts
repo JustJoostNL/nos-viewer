@@ -1,9 +1,10 @@
+import { Buffer } from "buffer";
+import CryptoJS from "crypto-js";
 import { InvidualVideoItem, IVideoItemsResponse } from "./nos_types";
 
 const liveAndBoradcastUrl =
-  "https://api.jstt.me/api/v2/nos/nosapp/v4/livestreams-and-broadcasts";
-const videoUrl =
-  "https://api.jstt.me/api/v2/nos/nosapp/v4/items?types[0]=video";
+  "https://api.nos.nl/nosapp/v4/livestreams-and-broadcasts";
+const videoUrl = "https://api.nos.nl/nosapp/v4/items?types[0]=video";
 
 export enum MainCategory {
   SPORT = "sport",
@@ -26,8 +27,23 @@ export class NosApiError extends Error {
   }
 }
 
+async function generateXNosHeader(): Promise<string> {
+  const salt = Math.floor(Date.now() / 1000);
+  const userAgent = `nos;${salt};Google/Nexus;Android/6.0;nl.nos.app/5.1.1`;
+  const stringToHash = `;UB}7Gaji==JPHtjX3@c${userAgent}`;
+  const md5HashHex = CryptoJS.MD5(stringToHash).toString(CryptoJS.enc.Hex);
+
+  const xnos = md5HashHex + Buffer.from(userAgent).toString("base64");
+  return xnos;
+}
+
 export async function getBroadcasts(): Promise<IVideoItemsResponse> {
-  const response = await fetch(liveAndBoradcastUrl);
+  const xNos = await generateXNosHeader();
+  const headers = new Headers({
+    "x-nos": xNos,
+  });
+
+  const response = await fetch(liveAndBoradcastUrl, { headers });
 
   if (!response.ok) {
     throw new NosApiError(
@@ -65,7 +81,12 @@ export async function getVideoItems({
   if (subCategory) url.searchParams.set("subCategories[0]", subCategory);
   if (type) url.searchParams.set("types[0]", type);
 
-  const response = await fetch(url.toString());
+  const xNos = await generateXNosHeader();
+  const headers = new Headers({
+    "x-nos": xNos,
+  });
+  const response = await fetch(url.toString(), { headers });
+  console.log(response.statusText);
 
   if (!response.ok) {
     throw new NosApiError(
@@ -83,9 +104,14 @@ export async function getVideoItem({
 }: {
   id: number;
 }): Promise<InvidualVideoItem> {
-  const itemUrl = `https://api.jstt.me/api/v2/nos/nosapp/v4/items/${id}`;
+  const itemUrl = `https://api.nos.nl/nosapp/v4/items/${id}`;
 
-  const response = await fetch(itemUrl);
+  const xNos = await generateXNosHeader();
+  const headers = new Headers({
+    "x-nos": xNos,
+  });
+
+  const response = await fetch(itemUrl, { headers });
 
   if (!response.ok) {
     throw new NosApiError(
