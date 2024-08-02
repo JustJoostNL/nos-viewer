@@ -139,6 +139,7 @@ export const VideoListItem: FC<IProps> = ({ video }) => {
 
             {isFavoritable && (
               <Tooltip
+                arrow
                 title={
                   isFavorite ? "Remove from favorites" : "Add to favorites"
                 }
