@@ -17,6 +17,9 @@
     "shell:allow-open",
     "deep-link:default",
     "updater:default",
+    "webview:allow-create-webview-window",
+    "webview:allow-create-webview",
+    "webview:allow-internal-toggle-devtools",
     "fs:allow-appdata-write",
     "fs:allow-appdata-read",
     "fs:scope-appdata-index"

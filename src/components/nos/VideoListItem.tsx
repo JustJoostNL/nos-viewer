@@ -6,11 +6,11 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import React, { FC, useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, { FC, useCallback, useMemo } from "react";
 import { FormattedDateTimeRange } from "react-intl";
 import { VideoItem } from "../../lib/nos/nos_types";
 import { RelativeTimeAgo } from "../shared/RelativeTimeAgo";
+import { createWindow } from "../../lib/utils/createWindow";
 import { VideoListItemLiveLabel } from "./VideoListItemLiveLabel";
 import { VideoListItemDurationLabel } from "./VideoListItemDurationLabel";
 import { timestampToUnix } from "./shared";
@@ -44,6 +44,14 @@ export const VideoListItem: FC<IProps> = ({ video }) => {
     return fallbackImage;
   }, [image?.formats]);
 
+  const handleItemClick = useCallback(() => {
+    createWindow(
+      `player-${video.id}`,
+      video.title,
+      `#/player/${encodeURIComponent(video.id)}`,
+    );
+  }, [video]);
+
   const currentYear = new Date().getFullYear();
   const displayYear =
     dateMeta.start && dateMeta.end
@@ -55,8 +63,7 @@ export const VideoListItem: FC<IProps> = ({ video }) => {
   return (
     <Card>
       <CardActionArea
-        component={Link}
-        to={`/player/${encodeURIComponent(video.id)}`}
+        onClick={handleItemClick}
         sx={{
           display: "flex",
           flexDirection: "column",

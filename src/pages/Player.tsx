@@ -59,7 +59,6 @@ export function Player() {
         "captions",
         "quality",
         "language",
-        "picture_in_picture",
         "cast",
         "playback_rate",
         "statistics",
