@@ -1,5 +1,5 @@
 import { Box, Button, ButtonGroup, Tab, Tabs, Typography } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
 import { JSONTree } from "react-json-tree";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -75,6 +75,10 @@ export function HomePage() {
     });
   }, []);
 
+  useEffect(() => {
+    setLimit(20);
+  }, [tab]);
+
   return (
     <ContentLayout title="Home">
       <Typography variant="h4" my={2} mx={2}>
@@ -92,11 +96,7 @@ export function HomePage() {
         <Tab label="News Videos" value="news-videos" />
       </Tabs>
 
-      {data && !isValidating ? (
-        <VideoList videos={data.items} />
-      ) : (
-        <VideoListSkeleton />
-      )}
+      {data ? <VideoList videos={data.items} /> : <VideoListSkeleton />}
 
       <Box display="flex" justifyContent="center" my={4}>
         <ButtonGroup>
@@ -107,7 +107,7 @@ export function HomePage() {
             Load Less
           </Button>
           <Button
-            disabled={limit >= MAX_LIMIT}
+            disabled={limit >= MAX_LIMIT || (data?.items?.length ?? 0) < limit}
             onClick={() => handleChangeLimit("increment")}
           >
             Load More
