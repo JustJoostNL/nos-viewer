@@ -11,75 +11,91 @@ export function Player() {
   const videoElement = useRef<HTMLVideoElement>(null);
   const shakaPlayer = useRef<shaka.Player | undefined>(undefined);
   const uiContainer = useRef<HTMLDivElement>(null);
-  const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  const { data, isLoading } = useSWR({ id }, getVideoItem, {
+  const { data } = useSWR({ id }, getVideoItem, {
     revalidateOnFocus: false,
   });
 
   const manifestUri = useMemo(() => {
-    const format = data?.formats.find(
-      (fm) => fm.width === 1280 && fm.height === 720,
+    const format = data?.formats?.find?.(
+      (fm) =>
+        (fm.width === 1280 && fm.height === 720) || fm?.name === "adaptive",
     );
     return format?.url.dash || format?.url.hls || format?.url.mp4;
   }, [data]);
   console.log(manifestUri);
 
   const currentSlug = useMemo(() => `player-${id}`, [id]);
-  console.log(currentSlug);
 
   useEffect(() => {
     if (!manifestUri || !videoElement.current || !uiContainer.current) return;
 
     const player = new shaka.Player(videoElement.current);
     shakaPlayer.current = player;
+    player.configure({
+      streaming: {
+        bufferBehind: 30, // 30 seconds of content will be buffered behind the playhead
+        liveSync: {
+          targetLatency: 30,
+        },
+        retryParameters: {
+          timeout: 30_000, // timeout in ms, after which we abort; 0 means never
+          maxAttempts: 128, // the maximum number of requests before we fail
+          baseDelay: 1000, // the base delay in ms between retries
+          backoffFactor: 4, // the multiplicative backoff factor between retries
+          fuzzFactor: 0.5, // the fuzz factor to apply to each retry delay
+        },
+      },
+    });
 
     const ui = new shaka.ui.Overlay(
       player,
       uiContainer.current,
       videoElement.current,
     );
-    ui.getControls();
     ui.configure({
-      overflowMenuButtons: ["quality", "captions", "language"],
+      overflowMenuButtons: [
+        "captions",
+        "quality",
+        "language",
+        "picture_in_picture",
+        "cast",
+        "playback_rate",
+        "statistics",
+      ],
+      singleClickForPlayAndPause: false,
+      doubleClickForFullscreen: false,
+      enableKeyboardPlaybackControls: false,
     });
 
     player.addEventListener("error", (event) => {
       console.log(event);
     });
 
-    // Try to load a manifest.
-    // This is an asynchronous process
-    player
-      .load(manifestUri)
-      .then(() => {
-        console.log("The video has now been loaded!");
-      })
-      .catch((error) => {
+    (async () => {
+      try {
+        await player.load(manifestUri);
+        setLoaded(true);
+      } catch (error: any) {
         console.error("Error code", error.code, "object", error);
-      });
+      }
+    })();
   }, [manifestUri, currentSlug]);
 
-  if (isLoading || loading || !data) {
+  if (data && !manifestUri) {
     return (
       <Box
         sx={{
-          // position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "#1c1c1c",
-          zIndex: 100,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          flexDirection: "column",
+          height: "100%",
+          width: "100%",
         }}
       >
-        <CircularProgress />
-        <Typography variant="h6" sx={{ mt: 2 }}>
-          {data ? data.title : "Loading..."}
+        <Typography variant="h4">
+          Sorry, this video is not available. Please try another one.
         </Typography>
       </Box>
     );
@@ -87,26 +103,54 @@ export function Player() {
 
   return (
     <div
-      id="video-container"
       style={{
-        zIndex: 2,
         height: "100%",
         width: "100%",
       }}
-      ref={uiContainer}
     >
-      <video
-        data-shaka-player
-        ref={videoElement}
-        autoPlay
-        muted
+      {!loaded && (
+        <Box
+          sx={{
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#1c1c1c",
+            zIndex: 100,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          <CircularProgress />
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            {data ? data.title : "Loading..."}
+          </Typography>
+        </Box>
+      )}
+      <div
+        id="video-container"
         style={{
-          zIndex: 1,
+          zIndex: 2,
           height: "100%",
           width: "100%",
-          objectFit: "contain",
         }}
-      />
+        ref={uiContainer}
+      >
+        <video
+          data-shaka-player
+          ref={videoElement}
+          autoPlay
+          muted
+          style={{
+            zIndex: 1,
+            height: "100%",
+            width: "100%",
+            objectFit: "contain",
+          }}
+        />
+      </div>
     </div>
   );
 }
