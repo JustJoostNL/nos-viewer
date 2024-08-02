@@ -3,7 +3,17 @@ import { IVideoItemsResponse } from "./nos_types";
 const liveAndBoradcastUrl =
   "https://api.jstt.me/api/v2/nos/nosapp/v4/livestreams-and-broadcasts";
 const videoUrl =
-  "https://api.jstt.me/api/v2/nos/nosapp/v4/items?mainCateogries[0]=sport&types[0]=video";
+  "https://api.jstt.me/api/v2/nos/nosapp/v4/items?types[0]=video";
+
+export enum MainCategory {
+  SPORT = "sport",
+  NEWS = "nieuws",
+}
+
+export enum SubCategory {
+  VIDEO = "video",
+  LIVESTREAM = "livestream",
+}
 
 export class NosApiError extends Error {
   constructor(
@@ -26,21 +36,26 @@ export async function getBroadcasts(): Promise<IVideoItemsResponse> {
     );
   }
 
-  const data = await response.json();
+  const json = await response.json();
 
-  return data;
+  return json;
 }
 
-export async function getVideos({
-  limit,
+export async function getVideoItems({
+  mainCategory,
+  subCategory,
   lastItemId,
 }: {
-  limit: string | number;
+  mainCategory: MainCategory;
+  subCategory?: SubCategory;
   lastItemId?: number;
 }): Promise<IVideoItemsResponse> {
   const url = new URL(videoUrl);
-  url.searchParams.set("limit", limit.toString());
+
+  url.searchParams.set("limit", "20");
   if (lastItemId) url.searchParams.set("before", lastItemId.toString());
+  if (mainCategory) url.searchParams.set("mainCategories[0]", mainCategory);
+  if (subCategory) url.searchParams.set("types[0]", subCategory);
 
   const response = await fetch(url.toString());
 

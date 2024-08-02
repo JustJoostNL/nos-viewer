@@ -29,7 +29,10 @@ export const VideoListItem: FC<IProps> = ({ video }) => {
     start: timestampToUnix(video.start_at),
     end: timestampToUnix(video.end_at),
     date: timestampToUnix(video.date),
+    published_at: timestampToUnix(video.published_at),
   };
+
+  const publishDate = dateMeta.published_at ?? dateMeta.date;
 
   const imageUrl = useMemo(() => {
     if (image?.formats) {
@@ -103,7 +106,7 @@ export const VideoListItem: FC<IProps> = ({ video }) => {
                 minute="numeric"
               />
             ) : (
-              dateMeta.date && <RelativeTimeAgo value={dateMeta.date} />
+              publishDate && <RelativeTimeAgo value={publishDate} />
             )}
           </Typography>
         </CardContent>
