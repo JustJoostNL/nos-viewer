@@ -12,6 +12,7 @@ import { ConfigProvider } from "./hooks/useConfig";
 import { MinimalScrollbars } from "./components/shared/MinimalScrollbars";
 import { IndexPage } from "./pages/IndexPage";
 import { Player } from "./pages/Player";
+import { FavoritesPage } from "./pages/Favorites";
 
 const platformName = platform();
 const root = ReactDOM.createRoot(
@@ -39,6 +40,7 @@ root.render(
               <Routes>
                 <Route path="/" element={<IndexPage />} />
                 <Route path="/home" element={<HomePage />} />
+                <Route path="/favorites" element={<FavoritesPage />} />
                 <Route path="/player/:id" element={<Player />} />
               </Routes>
             </HashRouter>

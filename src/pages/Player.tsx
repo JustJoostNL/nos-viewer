@@ -13,7 +13,7 @@ export function Player() {
   const uiContainer = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
 
-  const { data } = useSWR({ id }, getVideoItem, {
+  const { data, error } = useSWR({ id }, getVideoItem, {
     revalidateOnFocus: false,
   });
 
@@ -82,7 +82,7 @@ export function Player() {
     })();
   }, [manifestUri, currentSlug]);
 
-  if (data && !manifestUri) {
+  if ((data && !manifestUri) || error) {
     return (
       <Box
         sx={{

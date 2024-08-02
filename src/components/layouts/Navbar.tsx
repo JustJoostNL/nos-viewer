@@ -6,9 +6,14 @@ import {
   IconButton,
   alpha,
   lighten,
+  Button,
+  Box,
+  Stack,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { NavbarMenu } from "./NavbarMenu";
+
+const navbarContent: { href: string; children: string }[] = [];
 
 export const Navbar: FC = () => {
   const handleBackButton = useCallback(() => {
@@ -44,6 +49,19 @@ export const Navbar: FC = () => {
           >
             NOS Viewer
           </Typography>
+
+          <Box sx={{ flexGrow: 1 }} />
+
+          <Box sx={{ display: { xs: "none", md: "block" }, mr: 5 }}>
+            <Stack direction="row" alignItems="center" spacing={2}>
+              {navbarContent.map((item, index) => (
+                <Button key={index} sx={{ fontWeight: "bold" }} color="inherit">
+                  {item.children}
+                </Button>
+              ))}
+            </Stack>
+          </Box>
+
           <NavbarMenu />
         </Toolbar>
       </AppBar>

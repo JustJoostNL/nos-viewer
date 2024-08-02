@@ -1,3 +1,3 @@
 export interface IConfig {
-  test: boolean;
+  favoriteItems: number[];
 }

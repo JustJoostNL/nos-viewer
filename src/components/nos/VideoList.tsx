@@ -1,6 +1,6 @@
 import React from "react";
 import { styled } from "@mui/system";
-import { VideoItem } from "../../lib/nos/nos_types";
+import { InvidualVideoItem, VideoItem } from "../../lib/nos/nos_types";
 import { VideoListItem } from "./VideoListItem";
 
 export const Root = styled("div")(({ theme }) => ({
@@ -11,7 +11,7 @@ export const Root = styled("div")(({ theme }) => ({
 }));
 
 interface IProps {
-  videos: VideoItem[];
+  videos: VideoItem[] | InvidualVideoItem[];
 }
 
 export const VideoList = ({ videos }: IProps) => (

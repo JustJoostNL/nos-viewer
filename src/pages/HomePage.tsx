@@ -12,6 +12,7 @@ import {
 } from "../lib/nos/api";
 import { VideoList } from "../components/nos/VideoList";
 import { VideoListSkeleton } from "../components/nos/VideoListSkeleton";
+import { useConfig } from "../hooks/useConfig";
 
 enum TabCatorgory {
   BROADCASTS = "broadcasts",
@@ -63,6 +64,8 @@ export function HomePage() {
   const [limit, setLimit] = useState(20);
   const [debug, setDebug] = useState(false);
 
+  const { config } = useConfig();
+
   useHotkeys("d", () => setDebug((prev) => !prev));
 
   const { data, error } = useSWR(
@@ -110,7 +113,7 @@ export function HomePage() {
         variant="fullWidth"
         sx={{ marginBottom: 2 }}
       >
-        <Tab label="Live Broadcasts" value="broadcasts" />
+        <Tab label="Broadcasts" value="broadcasts" />
         <Tab label="Sports" value="sports" />
         <Tab label="Olympics" value="olympics" />
         <Tab label="Formula 1" value="formula1" />
@@ -140,7 +143,7 @@ export function HomePage() {
         </ButtonGroup>
       </Box>
 
-      {debug && <JSONTree data={{ items: data?.items }} />}
+      {debug && <JSONTree data={{ items: data?.items, config }} />}
     </ContentLayout>
   );
 }

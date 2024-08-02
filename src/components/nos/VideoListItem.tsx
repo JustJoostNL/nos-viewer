@@ -5,12 +5,18 @@ import {
   CardMedia,
   CardContent,
   Typography,
+  IconButton,
+  Stack,
+  Tooltip,
 } from "@mui/material";
 import React, { FC, useCallback, useMemo } from "react";
 import { FormattedDateTimeRange } from "react-intl";
+import { StarOutline, StarRounded } from "@mui/icons-material";
+import { yellow } from "@mui/material/colors";
 import { VideoItem } from "../../lib/nos/nos_types";
 import { RelativeTimeAgo } from "../shared/RelativeTimeAgo";
 import { createWindow } from "../../lib/utils/createWindow";
+import { useConfig } from "../../hooks/useConfig";
 import { VideoListItemLiveLabel } from "./VideoListItemLiveLabel";
 import { VideoListItemDurationLabel } from "./VideoListItemDurationLabel";
 import { timestampToUnix } from "./shared";
@@ -23,6 +29,11 @@ interface IProps {
 }
 
 export const VideoListItem: FC<IProps> = ({ video }) => {
+  const { config, updateConfig } = useConfig();
+
+  const isFavorite = config.favoriteItems?.includes(video.id);
+  const isFavoritable = video.type !== "broadcast";
+
   const image = video.image;
 
   const dateMeta = {
@@ -51,6 +62,24 @@ export const VideoListItem: FC<IProps> = ({ video }) => {
       `#/player/${encodeURIComponent(video.id)}`,
     );
   }, [video]);
+
+  const handleFavoriteClick = useCallback(
+    (event: React.MouseEvent) => {
+      event.stopPropagation(); // Prevent item click
+
+      const favorites = config.favoriteItems ?? [];
+      const isFavorite = favorites.includes(video.id);
+
+      if (isFavorite) {
+        updateConfig({
+          favoriteItems: favorites.filter((id) => id !== video.id),
+        });
+      } else {
+        updateConfig({ favoriteItems: [...favorites, video.id] });
+      }
+    },
+    [config.favoriteItems, updateConfig, video.id],
+  );
 
   const currentYear = new Date().getFullYear();
   const displayYear =
@@ -89,18 +118,41 @@ export const VideoListItem: FC<IProps> = ({ video }) => {
         </Box>
 
         <CardContent>
-          <Typography
-            variant="h6"
-            sx={{
-              WebkitBoxOrient: "vertical",
-              WebkitLineClamp: 2,
-              overflow: "hidden",
-              display: "-webkit-box",
-            }}
-            title={video.description}
+          <Stack
+            direction="row"
+            spacing={1}
+            justifyContent="space-between"
+            alignItems="center"
           >
-            {video.title}
-          </Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: 2,
+                overflow: "hidden",
+                display: "-webkit-box",
+              }}
+              title={video.description}
+            >
+              {video.title}
+            </Typography>
+
+            {isFavoritable && (
+              <Tooltip
+                title={
+                  isFavorite ? "Remove from favorites" : "Add to favorites"
+                }
+              >
+                <IconButton onClick={handleFavoriteClick}>
+                  {isFavorite ? (
+                    <StarRounded sx={{ color: yellow[700] }} />
+                  ) : (
+                    <StarOutline />
+                  )}
+                </IconButton>
+              </Tooltip>
+            )}
+          </Stack>
           <Typography variant="body2" color="text.secondary">
             {dateMeta.start && dateMeta.end ? (
               <FormattedDateTimeRange
