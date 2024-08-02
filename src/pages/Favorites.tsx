@@ -48,7 +48,7 @@ export function FavoritesPage() {
         </Typography>
       )}
 
-      {debug && <JSONTree data={config} />}
+      {debug && <JSONTree data={{ config, favorites, data }} />}
     </ContentLayout>
   );
 }
