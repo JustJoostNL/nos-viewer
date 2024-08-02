@@ -45,19 +45,25 @@ export async function getVideoItems({
   limit = 20,
   mainCategory,
   subCategory,
+  type,
+  systemTag,
   lastItemId,
 }: {
   limit?: string | number;
   mainCategory?: MainCategory;
-  subCategory?: SubCategory;
+  subCategory?: string;
+  type?: SubCategory;
+  systemTag?: string;
   lastItemId?: number;
 }): Promise<IVideoItemsResponse> {
   const url = new URL(videoUrl);
 
   url.searchParams.set("limit", limit.toString());
   if (lastItemId) url.searchParams.set("before", lastItemId.toString());
+  if (systemTag) url.searchParams.set("systemTag", systemTag);
   if (mainCategory) url.searchParams.set("mainCategories[0]", mainCategory);
-  if (subCategory) url.searchParams.set("types[0]", subCategory);
+  if (subCategory) url.searchParams.set("subCategories[0]", subCategory);
+  if (type) url.searchParams.set("types[0]", type);
 
   const response = await fetch(url.toString());
 

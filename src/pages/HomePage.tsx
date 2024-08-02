@@ -17,6 +17,8 @@ enum TabCatorgory {
   BROADCASTS = "broadcasts",
   SPORT_VIDEOS = "sport-videos",
   NEWS_VIDEOS = "news-videos",
+  F1_VIDEOS = "f1-videos",
+  OLYMPIC_VIDEOS = "olympic-videos",
 }
 
 function tabCategoryToFetcher(tab: TabCatorgory) {
@@ -31,7 +33,7 @@ function tabCategoryToFetcher(tab: TabCatorgory) {
         function: getVideoItems,
         args: {
           mainCategory: MainCategory.SPORT,
-          subCategory: SubCategory.VIDEO,
+          type: SubCategory.VIDEO,
         },
       };
     case TabCatorgory.NEWS_VIDEOS:
@@ -39,7 +41,22 @@ function tabCategoryToFetcher(tab: TabCatorgory) {
         function: getVideoItems,
         args: {
           mainCategory: MainCategory.NEWS,
-          subCategory: SubCategory.VIDEO,
+          type: SubCategory.VIDEO,
+        },
+      };
+    case TabCatorgory.OLYMPIC_VIDEOS:
+      return {
+        function: getVideoItems,
+        args: {
+          systemTag: "os-2024",
+          type: SubCategory.VIDEO,
+        },
+      };
+    case TabCatorgory.F1_VIDEOS:
+      return {
+        function: getVideoItems,
+        args: {
+          subCategory: "formule-1",
         },
       };
   }
@@ -93,6 +110,8 @@ export function HomePage() {
       >
         <Tab label="Live Broadcasts" value="broadcasts" />
         <Tab label="Sport Videos" value="sport-videos" />
+        <Tab label="Olympic Videos" value="olympic-videos" />
+        <Tab label="F1 Videos" value="f1-videos" />
         <Tab label="News Videos" value="news-videos" />
       </Tabs>
 
