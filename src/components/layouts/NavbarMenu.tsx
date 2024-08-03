@@ -1,7 +1,12 @@
 import React, { FC, useCallback, useState } from "react";
 import { IconButton, Link, ListItemIcon } from "@mui/material";
 import Menu from "@mui/material/Menu";
-import { MoreVert, Home, StarRounded } from "@mui/icons-material";
+import {
+  MoreVert,
+  Home,
+  StarRounded,
+  SearchRounded,
+} from "@mui/icons-material";
 import MenuItem from "@mui/material/MenuItem";
 
 export const NavbarMenu: FC = () => {
@@ -39,6 +44,13 @@ export const NavbarMenu: FC = () => {
             <StarRounded />
           </ListItemIcon>
           Favorites
+        </MenuItem>
+
+        <MenuItem onClick={handleMenuClose} component={Link} href="#/search">
+          <ListItemIcon>
+            <SearchRounded />
+          </ListItemIcon>
+          Search
         </MenuItem>
       </Menu>
     </>

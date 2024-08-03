@@ -94,7 +94,9 @@ export function Player() {
         }}
       >
         <Typography variant="h4">
-          Sorry, this video is not available. Please try another one.
+          {!manifestUri
+            ? "Sorry, there is no video available for this item. Please try another one."
+            : "Failed to load video"}
         </Typography>
       </Box>
     );

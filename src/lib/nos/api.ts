@@ -86,11 +86,39 @@ export async function getVideoItems({
     "x-nos": xNos,
   });
   const response = await fetch(url.toString(), { headers });
-  console.log(response.statusText);
 
   if (!response.ok) {
     throw new NosApiError(
       `Failed to fetch videos: ${await response.text()}`,
+      response,
+    );
+  }
+
+  const json = await response.json();
+  return json;
+}
+
+export async function getSearchResults({
+  query,
+}: {
+  query: string;
+}): Promise<IVideoItemsResponse> {
+  const searchUrl = "https://api.nos.nl/nosapp/v4/search";
+  const url = new URL(searchUrl);
+
+  url.searchParams.set("q", query);
+  url.searchParams.set("type[0]", "video");
+
+  const xNos = await generateXNosHeader();
+  const headers = new Headers({
+    "x-nos": xNos,
+  });
+
+  const response = await fetch(url.toString(), { headers });
+
+  if (!response.ok) {
+    throw new NosApiError(
+      `Failed to fetch search results: ${await response.text()}`,
       response,
     );
   }
